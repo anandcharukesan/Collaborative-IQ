@@ -1,22 +1,50 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const LoginComponent = () => {
-  const [isUserLogin, setIsUserLogin] = useState(true);
-  const [credentials, setCredentials] = useState({
-    registrationNumber: "",
+const Login = () => {
+  const [isUserLogin, setIsUserLogin] = useState(true); // Toggle between User and Entrepreneur login
+  const [formData, setFormData] = useState({
+    email: "",
     password: "",
     username: "",
   });
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Form submitted!");
-    // Add your login logic here...
+    setError(null);
+
+    try {
+      const endpoint = "http://localhost:5000/api/users/login";
+      const payload = isUserLogin
+        ? {
+            email: formData.email,
+            password: formData.password,
+          }
+        : {
+            email: formData.username, // Assuming entrepreneur uses email as username
+            password: formData.password,
+          };
+
+      const response = await axios.post(endpoint, payload);
+
+      if (response.data.success) {
+        alert("Login successful!");
+        // Redirect user to dashboard or perform other actions
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+      console.error(err);
+    }
   };
 
   return (
@@ -29,13 +57,15 @@ const LoginComponent = () => {
           <>
             <input
               type="email"
-              placeholder="email"
+              name="email"
+              placeholder="Email"
               onChange={handleChange}
               required
               className="w-full p-2 border border-gray-300 rounded mb-4"
             />
             <input
               type="password"
+              name="password"
               placeholder="Password"
               onChange={handleChange}
               required
@@ -60,6 +90,7 @@ const LoginComponent = () => {
             />
             <input
               type="password"
+              name="password"
               placeholder="Entrepreneur Password"
               onChange={handleChange}
               required
@@ -73,6 +104,7 @@ const LoginComponent = () => {
             </button>
           </>
         )}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         <p className="mt-4 text-sm text-center">
           <button
             type="button"
@@ -93,4 +125,4 @@ const LoginComponent = () => {
   );
 };
 
-export default LoginComponent;
+export default Login;

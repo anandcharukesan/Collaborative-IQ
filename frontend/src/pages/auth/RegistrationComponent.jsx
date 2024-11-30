@@ -1,40 +1,54 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const RegistrationComponent = () => {
+const Register = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     email: "",
     password: "",
     role: "",
   });
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(false);
 
-    fetch("http://localhost:8080/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    })
-      .then((response) => {
-        if (response.ok) {
-          alert("Registration successful! Please log in.");
-          // Redirect to login page or perform other actions
-        } else {
-          alert("Registration failed.");
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/register",
+        {
+          name: credentials.username,
+          email: credentials.email,
+          password: credentials.password,
+          is_entrepreneur: credentials.role === "ENTREPRENEUR",
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("An error occurred during registration.");
-      });
+      );
+
+      if (response.data.success) {
+        setSuccess(true);
+        setCredentials({
+          username: "",
+          email: "",
+          password: "",
+          role: "",
+        });
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+      console.error(err);
+    }
   };
 
   return (
@@ -88,6 +102,16 @@ const RegistrationComponent = () => {
           Register
         </button>
       </form>
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {success && (
+        <p className="text-green-500 text-sm mt-2">
+          Registration successful! You can now{" "}
+          <a href="/auth" className="text-black hover:underline">
+            Login here
+          </a>
+          .
+        </p>
+      )}
       <p className="mt-4 text-sm text-center">
         Already have an account?{" "}
         <a href="/auth" className="text-black hover:underline">
@@ -98,4 +122,4 @@ const RegistrationComponent = () => {
   );
 };
 
-export default RegistrationComponent;
+export default Register;
