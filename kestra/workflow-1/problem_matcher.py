@@ -200,10 +200,10 @@ def main():
     handler = ProblemStatementHandler(
         groq_api_key='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',
         mysql_config={
-            'host': 'mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com',
-            'port': 21505,
+            'host': 'host url',
+            'port': port,
             'user': 'avnadmin',
-            'password': 'AVNS_7fXFdQalrC_FpC7bLrD',
+            'password': 'password',
             'database': 'collaborativeIq'
         },
         kestra_webhook_url='http://localhost:8080/api/v1/executions/webhook/company.team/mysql_batch/4wjtkzwVGBM9yKnjm3yv8r',
