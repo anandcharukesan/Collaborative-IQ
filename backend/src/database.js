@@ -1,7 +1,16 @@
-const mysql = require('mysql2');
-
+import mysql from "mysql2";
 /////////Credntial here
 
+const db = mysql.createConnection({
+    host: 'mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com',
+    user: 'avnadmin',
+    password: 'AVNS_7fXFdQalrC_FpC7bLrD',     
+    database: 'collaborativeIq',
+    port: 21505,
+    ssl: {
+        rejectUnauthorized: false, // Important for Aiven databases
+    },
+});
 
 
 db.connect((err) => {
@@ -12,4 +21,4 @@ db.connect((err) => {
     }
 });
 
-module.exports = db;
+export default db;
