@@ -1,6 +1,6 @@
-const mysql = require('mysql2'); // Use `mysql2` for better SSL support
+const mysql = require('mysql2');
 
-
+/////////Credntial here
 
 db.connect((err) => {
     if (err) {

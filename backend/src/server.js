@@ -1,17 +1,19 @@
-const express = require("express");
-const cors = require("cors");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
+const PORT = 5000;
 
-// Configure CORS
-app.use(cors({
-  origin: "http://localhost:5173", // Replace with your frontend's URL
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-  credentials: true, // Allow credentials if needed
-}));
+// Middleware
+app.use(cors());  // Enable CORS
+app.use(bodyParser.json());
 
-// Other middleware and routes...
+// Routes
+app.use('/api/users', userRoutes);
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
+// Server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

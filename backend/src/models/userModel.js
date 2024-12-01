@@ -15,6 +15,7 @@ const findUserByEmail = (email, callback) => {
     db.query(query, [email], callback);
 };
 
+
 module.exports = {
     registerUser,
     findUserByEmail,

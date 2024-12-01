@@ -10,10 +10,9 @@ function App() {
     <Router>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Routes>
-          <Route path="/auth" element={<LoginComponent />} />
+          <Route path="/login" element={<LoginComponent />} />
           <Route path="/register" element={<RegistrationComponent />} />
           <Route path="/dashboard" element={<DashboardComponent />} />
-          {/* Add more routes as needed */}
         </Routes>
       </div>
     </Router>

@@ -1,125 +1,93 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 const Login = () => {
-  const [isUserLogin, setIsUserLogin] = useState(true); // Toggle between User and Entrepreneur login
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    username: "",
   });
-  const [error, setError] = useState(null);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-
     try {
-      const endpoint = "http://localhost:5000/api/users/login";
-      const payload = isUserLogin
-        ? {
-            email: formData.email,
-            password: formData.password,
-          }
-        : {
-            email: formData.username, // Assuming entrepreneur uses email as username
-            password: formData.password,
-          };
-
-      const response = await axios.post(endpoint, payload);
-
-      if (response.data.success) {
-        alert("Login successful!");
-        // Redirect user to dashboard or perform other actions
-      } else {
-        setError("Invalid email or password");
-      }
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        formData
+      );
+      setSuccess(response.data.message);
+      setError("");
     } catch (err) {
-      setError("Something went wrong. Please try again.");
-      console.error(err);
+      setError(err.response?.data?.message || "Something went wrong");
+      setSuccess("");
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-80">
-      <h2 className="text-xl font-bold mb-4">
-        {isUserLogin ? "User Login" : "Entrepreneur Login"}
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {isUserLogin ? (
-          <>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-            />
-            <button
-              type="submit"
-              className="w-full bg-black text-white p-2 rounded"
-            >
-              Login
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Entrepreneur Password"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-            />
-            <button
-              type="submit"
-              className="w-full bg-black text-white p-2 rounded"
-            >
-              Login
-            </button>
-          </>
-        )}
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-        <p className="mt-4 text-sm text-center">
-          <button
-            type="button"
-            onClick={() => setIsUserLogin(!isUserLogin)}
-            className="text-black hover:underline"
+    <div className="flex justify-center items-center h-screen">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-lg w-96"
+      >
+        <h2 className="text-2xl font-semibold mb-4">Login</h2>
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+        {success && <div className="text-green-500 mb-2">{success}</div>}
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
           >
-            Switch to {isUserLogin ? "Entrepreneur" : "User"} Login
-          </button>
-        </p>
-        <p className="mt-2 text-sm text-center">
-          Don't have an account?{" "}
-          <a href="/register" className="text-black hover:underline">
-            Register here
-          </a>
-        </p>
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-2 rounded-md"
+        >
+          Login
+        </button>
+
+        {/* Link to the Register page */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-blue-500 hover:underline">
+              Register
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );
