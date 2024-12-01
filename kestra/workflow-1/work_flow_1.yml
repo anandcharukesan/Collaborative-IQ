@@ -1,0 +1,84 @@
+id: workflow_1
+namespace: company.team
+
+tasks:
+
+      
+  - id: insert_problem
+    type: io.kestra.plugin.jdbc.mysql.Query
+    url: url here
+    username: user
+    password: password
+    sql: |
+      INSERT INTO problems 
+      (title, description, created_by, status, created_at)
+      VALUES 
+      (
+        '{{ trigger.body.title | default("Unknown Title") }}', 
+        '{{ trigger.body.description | default("No description provided") }}', 
+        '{{ trigger.body.created_by | default("11e12d0d-usernotfoundf9-6cb41526d919") }}',
+        'New',
+        '{{ trigger.body.created_at | date("yyyy-MM-dd HH:mm:ss") | default("1970-01-01 00:00:00") }}'
+      )
+
+  - id: fetch_problem_id
+    type: io.kestra.plugin.jdbc.mysql.Query
+    url: url here
+    username: user
+    password: password
+    sql: |
+      SELECT problem_id
+      FROM problems
+      ORDER BY problem_id DESC
+      LIMIT 1
+    fetchType: FETCH
+
+  # - id: log_fetch
+  #   type: io.kestra.plugin.core.log.Log
+  #   message: 
+  #      - '{{ outputs.fetch_problem_id.rows[0].problem_id }}'
+
+
+  - id: process_problem_script
+    type: io.kestra.plugin.scripts.python.Commands
+    namespaceFiles:
+      enabled: true
+    docker:
+      image: python:slim
+    warningOnStdErr: false
+    beforeCommands:
+      - pip install kestra groq mysql-connector-python requests
+    commands:
+      - python problem_matcher.py
+    env:
+      PROBLEM_TITLE: '{{ trigger.body.title }}'
+      PROBLEM_DESCRIPTION: '{{ trigger.body.description }}'
+      USER_ID: '{{ trigger.body.created_by }}'
+
+
+  - id: log_fetch
+    type: io.kestra.plugin.core.log.Log
+    message: 
+       - '{{ outputs.process_problem_script.vars.is_trigger }}'
+
+  - id: if_condition
+    type: io.kestra.plugin.core.flow.If
+    condition: "{{ outputs.process_problem_script.vars.is_trigger }}"
+    then:
+       - id: trigger_workflow_2
+         type: io.kestra.plugin.core.flow.Subflow
+         namespace: company.team
+         flowId: workflow_2
+         wait: true
+         transmitFailed: true
+         inputs:
+          problem_title: '{{ trigger.body.title }}'
+          problem_description: '{{ trigger.body.description }}'
+          user_id: '{{ trigger.body.created_by }}'
+          problem_id: '{{ outputs.fetch_problem_id.rows[0].problem_id }}'
+ 
+
+triggers:
+  - id: problem_submission_webhook
+    type: io.kestra.plugin.core.trigger.Webhook
+    key: 7yxBdQmT32KLzvNw6WpQr4
