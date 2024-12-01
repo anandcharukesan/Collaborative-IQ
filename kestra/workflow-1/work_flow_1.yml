@@ -7,7 +7,7 @@ tasks:
   - id: insert_problem
     type: io.kestra.plugin.jdbc.mysql.Query
     url: url here
-    username: avnadmin
+    username: user
     password: password
     sql: |
       INSERT INTO problems 
@@ -24,7 +24,7 @@ tasks:
   - id: fetch_problem_id
     type: io.kestra.plugin.jdbc.mysql.Query
     url: url here
-    username: avnadmin
+    username: user
     password: password
     sql: |
       SELECT problem_id
