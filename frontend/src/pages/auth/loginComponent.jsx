@@ -26,6 +26,7 @@ const Login = () => {
         formData
       );
       setSuccess(response.data.message);
+      localStorage.setItem("user", response.data.user);
       setError("");
 
       // Redirect to the dashboard upon successful login
