@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
+const solutionRoutes = require('./routes/solutionRoutes');
+
 
 const app = express();
 const PORT = 5000;
@@ -12,6 +14,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use("/api/solutions", solutionRoutes);
 
 // Server
 app.listen(PORT, () => {
