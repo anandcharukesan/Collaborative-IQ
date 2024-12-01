@@ -218,10 +218,10 @@ def main():
 
     # MySQL Database Configuration
     DB_CONFIG={
-            'host': 'mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com',
-            'port': 21505,
-            'user': 'avnadmin',
-            'password': 'AVNS_7fXFdQalrC_FpC7bLrD',
+            'host': 'host url',
+            'port': port,
+            'user': 'user name',
+            'password': 'password',
             'database': 'collaborativeIq'
         }
     
