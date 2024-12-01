@@ -9,9 +9,9 @@ triggers:
 tasks:
   - id: fetch_problem_tags
     type: io.kestra.plugin.jdbc.mysql.Query
-    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
-    username: avnadmin
-    password: AVNS_7fXFdQalrC_FpC7bLrD
+    url: url
+    username: user
+    password: password
     sql: |
       SELECT * FROM problem_tags
       WHERE problem_statement_id = '{{ trigger.body.problem_statement_id }}'
