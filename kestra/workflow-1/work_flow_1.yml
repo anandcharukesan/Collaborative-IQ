@@ -6,9 +6,9 @@ tasks:
       
   - id: insert_problem
     type: io.kestra.plugin.jdbc.mysql.Query
-    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
+    url: url here
     username: avnadmin
-    password: AVNS_7fXFdQalrC_FpC7bLrD
+    password: password
     sql: |
       INSERT INTO problems 
       (title, description, created_by, status, created_at)
@@ -23,9 +23,9 @@ tasks:
 
   - id: fetch_problem_id
     type: io.kestra.plugin.jdbc.mysql.Query
-    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
+    url: url here
     username: avnadmin
-    password: AVNS_7fXFdQalrC_FpC7bLrD
+    password: password
     sql: |
       SELECT problem_id
       FROM problems
