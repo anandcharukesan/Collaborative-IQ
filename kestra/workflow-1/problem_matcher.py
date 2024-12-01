@@ -202,7 +202,7 @@ def main():
         mysql_config={
             'host': 'host url',
             'port': port,
-            'user': 'avnadmin',
+            'user': 'user',
             'password': 'password',
             'database': 'collaborativeIq'
         },
