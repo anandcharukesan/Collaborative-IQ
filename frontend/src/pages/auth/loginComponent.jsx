@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +10,8 @@ const Login = () => {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const navigate = useNavigate(); // Initialize useNavigate hook for redirection
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,8 +26,10 @@ const Login = () => {
         formData
       );
       setSuccess(response.data.message);
-      localStorage.setItem("user", response.data.user);
       setError("");
+
+      // Redirect to the dashboard upon successful login
+      navigate("/dashboard"); // Assuming '/dashboard' is the route for the dashboard page
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
       setSuccess("");
