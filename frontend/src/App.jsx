@@ -4,7 +4,7 @@ import LoginComponent from "./pages/auth/loginComponent";
 import RegistrationComponent from "./pages/auth/RegistrationComponent"; // Ensure this path is correct
 import DashboardComponent from "./pages/dashboard/DashboardComponent"; // Ensure this path is correct"; // Ensure this path is correct
 import "./index.css";
-
+import SolutionForm from "./pages/dashboard/solutionForm";
 function App() {
   return (
     <Router>
@@ -13,6 +13,7 @@ function App() {
           <Route path="/login" element={<LoginComponent />} />
           <Route path="/register" element={<RegistrationComponent />} />
           <Route path="/dashboard" element={<DashboardComponent />} />
+          <Route path="/solution" element={<SolutionForm />} />
         </Routes>
       </div>
     </Router>
