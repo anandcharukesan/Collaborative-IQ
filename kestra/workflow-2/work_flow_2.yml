@@ -1,0 +1,30 @@
+id: workflow_2
+namespace: company.team
+
+inputs:
+  - id: problem_title
+    type: STRING
+  - id: user_id
+    type: STRING
+  - id: problem_id
+    type: INT
+  - id: problem_description
+    type: STRING
+
+tasks:
+  - id: problem_statement_making
+    type: io.kestra.plugin.scripts.python.Commands
+    namespaceFiles:
+      enabled: true
+    docker:
+      image: python:slim
+    warningOnStdErr: false
+    beforeCommands:
+      - pip install groq mysql-connector-python requests
+    commands:
+      - python problem_statement_maker.py
+    env:
+      PROBLEM_TITLE: '{{ inputs.problem_title }}'
+      PROBLEM_DESCRIPTION: '{{ inputs.problem_description }}'
+      PROBLEM_ID: '{{ inputs.problem_id }}'
+      USER_ID: '{{ inputs.user_id }}'

@@ -1,0 +1,90 @@
+id: solution-tags-retrieval
+namespace: mycompany
+
+triggers:
+  - id: webhook
+    type: io.kestra.plugin.core.trigger.Webhook
+    key: 4wjtkzwVGBM9yKnjm3yv8r
+
+tasks:
+  - id: fetch_problem_tags
+    type: io.kestra.plugin.jdbc.mysql.Query
+    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
+    username: avnadmin
+    password: AVNS_7fXFdQalrC_FpC7bLrD
+    sql: |
+      SELECT * FROM problem_tags
+      WHERE problem_statement_id = '{{ trigger.body.problem_statement_id }}'
+    fetchType: FETCH
+
+  - id: fetch_interested_users
+    type: io.kestra.plugin.jdbc.mysql.Query
+    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
+    username: avnadmin
+    password: AVNS_7fXFdQalrC_FpC7bLrD
+    sql: |
+      SELECT DISTINCT interested_userId 
+      FROM interests 
+      WHERE interested_tag_id IN (
+        {% for tag in outputs.fetch_problem_tags.rows %}
+        {{ tag.tag_id }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+      )
+    fetchType: FETCH
+
+  - id: fetch_interested_users_emails
+    type: io.kestra.plugin.jdbc.mysql.Query
+    url: jdbc:mysql://mysql-83d1e8d-iqcollaborative-ea09.e.aivencloud.com:21505/collaborativeIq
+    username: avnadmin
+    password: AVNS_7fXFdQalrC_FpC7bLrD
+    sql: |
+      SELECT user_id, email 
+      FROM users 
+      WHERE user_id IN (
+        {% for user in outputs.fetch_interested_users.rows %}
+        {{ user.interested_userId }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+      )
+    fetchType: FETCH
+
+  - id: send-email-notification
+    type: io.kestra.plugin.notifications.mail.MailSend
+    to: |
+      {% for user in outputs.fetch_interested_users_emails.rows %}
+        {{ user.email }}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    from: iqcollaborative@gmail.com
+    subject: "New Solution for a Problem You Are Interested In!"
+    host: smtp-relay.brevo.com
+    port: 587
+    username: 8106b9001@smtp-brevo.com
+    password: sD8kQTZ4JpKXSdOE
+    transportStrategy: SMTP
+    htmlTextContent: |
+      <html>
+      <body>
+      <h2>Solution Discovered for Your Interested Problem!</h2>
+      <p>We are excited to inform you that a solution has been found for a problem that matches your interests.</p>
+
+      <h3>Problem Details:</h3>
+      <ul>
+        <li><strong>Problem ID:</strong> {{ trigger.body.problem_statement_id }}</li>
+        <li><strong>Problem Title:</strong> {{ trigger.body.title }}</li>
+        <li><strong>Description:</strong> {{ trigger.body.description }}</li>
+        <li><strong>Created By:</strong> {{ trigger.body.user_id }}</li>
+        <li><strong>Problem Status:</strong> {{ trigger.body.status }}</li>
+      </ul>
+
+      <h3>Solution Details:</h3>
+      <ul>
+        <li><strong>Solution Name:</strong> {{ trigger.body.solution_name }}</li>
+        <li><strong>Solution Description:</strong> {{ trigger.body.solution_description }}</li>
+        <li><strong>Solution Link:</strong> <a href="{{ trigger.body.solution_link }}" target="_blank">Click here to view the solution</a></li>
+      </ul>
+
+      <p>We hope this solution provides valuable insights for your interests. For more details, check out the platform.</p>
+
+      <hr>
+      <small>Automated notification from Kestra</small>
+      </body>
+      </html>
