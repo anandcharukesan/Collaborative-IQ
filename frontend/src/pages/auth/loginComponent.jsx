@@ -24,6 +24,7 @@ const Login = () => {
         formData
       );
       setSuccess(response.data.message);
+      localStorage.setItem("user", response.data.user);
       setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
