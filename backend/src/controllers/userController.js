@@ -1,9 +1,9 @@
-const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid'); // Import UUID
-const userModel = require('../models/userModel');
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid'; // Import UUID
+import * as userModel from '../models/userModel.js';
 
 // Register user
-const register = async (req, res) => {
+export const register = async (req, res) => {
     const { name, email, password, is_entrepreneur } = req.body;
 
     if (!name || !email || !password) {
@@ -32,7 +32,7 @@ const register = async (req, res) => {
 };
 
 // Login user
-const login = (req, res) => {
+export const login = (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -66,9 +66,4 @@ const login = (req, res) => {
             },
         });
     });
-};
-
-module.exports = {
-    register,
-    login,
 };
